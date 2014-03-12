@@ -1,0 +1,92 @@
+﻿@{
+    ViewBag.Title = "Microsoft WebAPI with Angular.js Demo -- yevgeller.net";
+}
+<p>
+    This page demonstrates a simple <a href="http://www.asp.net/web-api" target="_blank">Microsoft ASP.Net Web API</a> service with
+    an <a href="http://www.angularjs.org/" target="_blank">Angular.js</a> front-end. Feel free to browse the script files.
+    Blog post on the topic on <a href="http://yevgeller.blogspot.com/2014/03/aspnet-web-api-with-angularjs-front-end.html" target="_blank">my blog</a>.
+</p>
+<p>
+    If the number of records in the "database" exceeds twelve or equals to zero, the record set is reset.
+</p>
+
+@section scripts {
+    @*<script src="~/Scripts/angular.js"></script>*@
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular.min.js"></script>
+    <script src="~/Scripts/Home/records.js"></script>
+    <link href="/Content/Site.css" rel="stylesheet" />
+}
+
+<div data-ng-app="recordsApp">
+    <div data-ng-controller="recordsCtrl">
+        @*{{1+1}}*@
+        Filter:
+        <select data-ng-model="app.catFilter"
+                data-ng-options="c.cat for c in app.categories">
+            <option value="">-- all --</option>
+        </select>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Value</th>
+                    <th>Category</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-ng-repeat="r in app.records | filter:app.catFilter.cat | orderBy:'RecordDate'" class="bordered">
+                    <td>{{r.RecordDate}}</td>
+                    <td>{{r.RecordValue}}</td>
+                    <td>{{r.RecordCategory}}</td>
+                    <td style="padding:2px 12px;font-size:xx-small;"><button ng-click="app.findRecordForEditing(r.RecordId)">Edit</button></td>
+                    <td style="padding:2px 12px;font-size:xx-small;"><button ng-click="app.deleteRecord(r.RecordId)">Delete</button></td>
+                </tr>
+            </tbody>
+        </table>
+        {{$scope.app.error}}
+        <br />
+        <button ng-click="app.displayAddNewRecordPanel()" ng-hide="app.showAddNewRecord">New record...</button>
+        <div data-ng-controller="newRecordCtrl" ng-show="app.showAddNewRecord">
+            <h3>New record:</h3>
+            <table>
+                <tr>
+                    <td><label for="newRecordDate">Date:</label></td>
+                    <td><input type="text" id="newRecordDate" data-ng-model="newRecordDate" /></td>
+                </tr>
+                <tr>
+                    <td><label for="newRecordValue">Value:</label></td>
+                    <td>
+                        <input type="text" id="newRecordValue" data-ng-model="newRecordValue" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="newRecordCategory">Category:</label></td>
+                    <td>
+                        <input type="text" id="newRecordCategory" data-ng-model="newRecordCategory" />
+                    </td>
+                </tr>
+            </table>
+            <button data-ng-click="addNewRecord()">Add</button>
+            <button data-ng-click="cancelAddingNewRecord()">Cancel</button>
+            <label>{{addApp.result}}</label>
+        </div>
+        <div data-ng-show="app.editedRecordId">
+            <h3>Edit record:</h3>
+            <label for="editRecordDate">Date:</label>
+            <input type="text" id="editRecordDate" ng-model="app.editRecordDate" />
+            <br />
+            <label for="editRecordValue">Value:</label>
+            <input type="text" id="editRecordValue" data-ng-model="app.editRecordValue" />
+            <br />
+            <label for="editRecordCategory">Category:</label>
+            <input data-ng-model="app.editRecordCategory" type="text" id="editRecordCategory" />
+            <br /><br />
+            <button data-ng-click="app.saveEdit()">Update</button>
+            <button data-ng-click="app.clearEditingArea()">Cancel</button>
+
+            <label>{{addApp.result}}</label>
+        </div>
+    </div>
+</div>
